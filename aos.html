@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>AOS动效</title>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-touch-fullscreen" content="yes">
+		<meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+		<link rel="stylesheet" type="text/css" href="css/aos.min.css" />
+		<style>
+			a,
+			body,
+			center,
+			cite,
+			code,
+			dd,
+			del,
+			div,
+			dl,
+			dt,
+			em,
+			fieldset,
+			figcaption,
+			figure,
+			footer,
+			form,
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			header,
+			hr,
+			html,
+			img,
+			input,
+			label,
+			legend,
+			li,
+			mark,
+			ol,
+			p,
+			section,
+			span,
+			strong,
+			textarea,
+			time,
+			ul,
+			var {
+				margin: 0;
+				padding: 0;
+				border: 0;
+			}
+			
+			html,
+			body {
+				height: 100%;
+				width: 100%;
+				background: #EDEDED;
+			}
+			header{
+				width: 100%;
+				height: 50px;
+				background: #FFFFFF;
+				text-align: center;
+			}
+			header img{
+				width: 18px;
+				margin: 16px;
+				float: left;
+			}
+			header label{
+				font-size: 18px;
+				line-height: 50px;
+				margin-left: -40px;
+			}
+			header div{
+				float: right;
+				line-height: 50px;
+				padding-right: 16px;
+			}
+			.content{
+				width: 100%;
+				text-align: center;
+			}
+			.title{  
+				width: 15px;  
+				margin: 50% auto;  
+				margin-bottom: 500px;
+				line-height: 24px;  
+				font-size: 20px;  
+				word-wrap: break-word;/*英文的时候需要加上这句，自动换行*/  
+			}  
+			.item {
+			  width: 200px;
+			  margin: 50px auto;
+			  padding: 80px 0;
+			  background: #ccc;
+			  text-align: center;
+			  color: #FFF;
+			  font-size: 2em;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="img/header-back.png" onclick="exitFun()" />
+			<label>AOS动效</label>
+		</header>
+		<div class="content">
+			<div class="title">下拉查看动效</div>
+			<div class="item" data-aos="fade-up" data-aos-delay="300">fade-up</div>
+			<div class="item" data-aos="fade-down" data-aos-delay="400">fade-down</div>
+			<div class="item" data-aos="fade-right" data-aos-delay="500">fade-right</div>
+			<div class="item" data-aos="fade-left">fade-left</div>
+
+			<div class="item" data-aos="zoom-in">zoom-in</div>
+			<div class="item" data-aos="zoom-out">zoom-out</div>
+
+			<div class="item" data-aos="slide-up">slide-up</div>
+
+			<div class="item" data-aos="flip-up">flip-up</div>
+			<div class="item" data-aos="flip-down">flip-down</div>
+			<div class="item" data-aos="flip-right">flip-right</div>
+			<div class="item" data-aos="flip-left">flip-left</div>
+		</div>
+
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/aos.min.js"></script>
+		<script>
+			AOS.init({
+				duration: 1200,
+				once: false,
+				easing: "ease-out"
+			});
+
+			function exitFun() {
+				history.back();
+			}
+		</script>
+	</body>
+</html>
