@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+		<title>标签</title>
+
+		<script type="text/javascript" src="js/rem.min.js"></script>
+		<link rel="stylesheet" href="css/weui.min.css" />
+
+		<style>
+			html,body{
+				width: 100%;
+				height: 100%;
+				text-align: center;
+			}
+			.content{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			button {
+				width: 90% !important;
+				height: 0.8rem;
+				line-height: 0.8rem !important;
+				margin: 10px 0;
+				font-size: 16px !important;
+			}
+			input{
+				width: 90% !important;
+				font-size: 14px !important;
+				height: 0.8rem !important;
+				border: 1px solid #ccc !important;
+				border-radius: 5px;
+				padding-left: 5px;
+			}
+			label{
+				font-size: 16px;
+				text-align: left;
+				width: 90%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<input id="inputChild" class="weui-input" type="text" value="我是子页面的输入框" />
+			<button class="weui-btn weui-btn_primary" onclick="getVarVal2()">获取父页面的变量值</button>
+			<button class="weui-btn weui-btn_primary" onclick="getInpVal2()">获取父页面的label值</button>
+			<button class="weui-btn weui-btn_primary" onclick="getFun2()">调用父页面的方法</button>
+			<label id="infoChild">此处显示从父页面获取的值</label>
+		</div>
+
+		<script type="text/javascript" src="js/united.js"></script>
+		<script>
+			var inputChild = document.getElementById("inputChild");
+			var infoChild = document.getElementById("infoChild");
+
+			var info = "我是子页面的变量，我的值是。。。";
+
+			function getVarVal2() {
+				var val = parent.mainVal;
+				infoChild.innerHTML = "父页面的变量：" + val;
+			}
+
+			function getInpVal2() {
+				var val = parent.document.getElementById("infoMain").innerHTML;
+				infoChild.innerHTML = "父页面的label值：" + val;
+			}
+
+			function getFun2() {
+				parent.window.mainInfo();
+			}
+
+			function changeColor(val) {
+				inputChild.style.color = val;
+			}
+		</script>
+	</body>
+</html>

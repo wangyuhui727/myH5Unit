@@ -1,7 +1,14 @@
+html,body{
+	width: 100%;
+	height: 100%;
+}
+body{
+	height: calc(100% - 0.8rem);
+}
+
 /* 自定义组件 */
 .blueBtn {
 	width: 90%;
-	margin-left: 5%;
 	height: 0.8rem;
 	border: 0;
 	border-radius: 0.12rem;
@@ -41,11 +48,17 @@ header label {
 
 .content {
 	margin-top: 0.8rem;
+	height: 100%;
+	width: 100%;
+	text-align: center;
 }
 
 /* 修改weui默认样式 */
 .weui-cells {
 	margin: 0;
+}
+.weui-cell__bd{
+	text-align: left;
 }
 
 /* swiper样式 */
@@ -135,4 +148,23 @@ header label {
 .swiper5 .swiper-slide {
 	width: 85%;
 	background: #eee;
+}
+
+/* aos样式 */
+.aos .title {
+	width: 0.4rem;
+    height: 100%;
+    margin: 0 auto;
+    font-size: 20px;
+	word-wrap: break-word;/*英文的时候需要加上这句，自动换行*/
+}
+
+.aos .item {
+	width: 2rem;
+	margin: 0.5rem auto;
+	padding: 0.8rem 0;
+	background: #ccc;
+	text-align: center;
+	color: #FFF;
+	font-size: 16px;
 }

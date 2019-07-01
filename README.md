@@ -8,10 +8,12 @@ html5开发常用插件整理
 
 最后，集合常用的插件库，具体如下：
 
-1、dialog提示框
+1、tabbar标签栏
 
-2、tabbar标签栏
+2、dialog提示框
 
-3、AOS动效:页面滚动元素动画jQuery动画库AOS的展示
+3、轮播图：将swiper中常用的集中轮播图整理展示，更多效果见swiper官网（https://www.swiper.com.cn/）
 
-4、轮播图：将swiper中常用的集中轮播图整理展示，更多效果见swiper官网（https://www.swiper.com.cn/）
+4、AOS动效:页面滚动元素动画jQuery动画库AOS的展示
+
+5、iframe页面之间联动,互相获取变量，dom和调用方法

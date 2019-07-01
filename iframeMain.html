@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+		<title>标签</title>
+
+		<script type="text/javascript" src="js/rem.min.js"></script>
+		<link rel="stylesheet" href="css/style.css" />
+
+		<style>
+			.content, .content .main{
+				display: flex;
+				flex-direction: column;
+			}
+			button {
+				width: 90% !important;
+				height: 0.8rem;
+				line-height: 0.8rem !important;
+				margin: 10px 0;
+				font-size: 16px !important;
+			}
+			
+			iframe {
+				margin-top: 50px;
+				border: 0;
+				height: 6rem;
+			}
+			
+			label{
+				font-size: 16px;
+				text-align: left;
+				width: 90%;
+				margin-left: 5%;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="img/header-back.png" onclick="history.back()" />
+			<label>iframe联动</label>
+		</header>
+		<div class="content">
+			<div class="main">
+				<button class="weui-btn weui-btn_primary" onclick="getVarVal()">获取子页面的变量值</button>
+				<button class="weui-btn weui-btn_primary" onclick="getInpVal()">获取子页面的input值</button>
+				<button class="weui-btn weui-btn_primary" onclick="getFun()">调用子页面的方法</button>
+				<label id="infoMain">此处显示从子页面获取的值</label>
+			</div>
+			<iframe id="iframe" src="iframeChild.html"></iframe>
+		</div>
+
+		<script type="text/javascript" src="js/united.js"></script>
+		<script>
+			var iframe = document.getElementById("iframe");
+			var infoMain = document.getElementById("infoMain");
+
+			var mainVal = "我是父页面的变量，我的值是！！！";
+
+			function getVarVal() {
+				var val = iframe.contentWindow.info;
+				infoMain.innerHTML = "子页面的变量：" + val;
+			}
+
+			function getInpVal() {
+				var val = iframe.contentWindow.document.getElementById("inputChild").value;
+				infoMain.innerHTML = "子页面的input值：" + val;
+			}
+
+			function getFun() {
+				iframe.contentWindow.changeColor('red');
+				infoMain.innerHTML = "子页面的input颜色值变为：red";
+			}
+
+			function mainInfo() {
+				infoMain.innerHTML = "子页面调用了我的方法";
+			}
+		</script>
+	</body>
+</html>
