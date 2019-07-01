@@ -7,152 +7,9 @@
 		<meta name="apple-touch-fullscreen" content="yes">
 		<meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-
-		<link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
-		<style>
-			a,
-			body,
-			center,
-			cite,
-			code,
-			dd,
-			del,
-			div,
-			dl,
-			dt,
-			em,
-			fieldset,
-			figcaption,
-			figure,
-			footer,
-			form,
-			h1,
-			h2,
-			h3,
-			h4,
-			h5,
-			h6,
-			header,
-			hr,
-			html,
-			img,
-			input,
-			label,
-			legend,
-			li,
-			mark,
-			ol,
-			p,
-			section,
-			span,
-			strong,
-			textarea,
-			time,
-			ul,
-			var {
-				margin: 0;
-				padding: 0;
-				border: 0;
-			}
-			
-			html,
-			body {
-				height: 100%;
-				width: 100%;
-				background: #EDEDED;
-			}
-			header{
-				width: 100%;
-				height: 50px;
-				background: #FFFFFF;
-				text-align: center;
-			}
-			header img{
-				width: 18px;
-				margin: 16px;
-				float: left;
-			}
-			header label{
-				font-size: 18px;
-				line-height: 50px;
-				margin-left: -40px;
-			}
-			header div{
-				float: right;
-				line-height: 50px;
-				padding-right: 16px;
-			}
-			.content{
-				width: 100%;
-				text-align: center;
-			}
-			.swiper-container{
-				margin-bottom: 50px;
-			}
-			img {
-				width: 100%;
-			}
-			.swiper-button-prev,
-			.swiper-container-rtl .swiper-button-next {
-				background-image: url(http://112.25.236.197:8100/html/wechat1/image/index/IS_left.png);
-				left: 2%;
-				right: auto;
-			}
-			.swiper-button-next,
-			.swiper-container-rtl .swiper-button-prev {
-				background-image: url(http://112.25.236.197:8100/html/wechat1/image/index/IS_right.png);
-				right: 2%;
-				left: auto;
-			}
-			.swiper-button-next,
-			.swiper-button-prev {
-				width: 15px;
-				height: 15px;
-				background-size: 15px 15px;
-				margin-top: -10px;
-			}
-			:focus {
-				outline: none;
-			}
-			
-			.swiper2{
-				height: 20px;
-			}
-			
-			.swiper3 {
-				width: 100%;
-			}
-			.swiper3 .swiper-slide {
-				background-position: center;
-				background-size: cover;
-				width: 70%;
-			}
-			.swiper3 .swiper-slide img {
-				border-radius: 5px;
-			}
-			.swiper4 .swiper-pagination-bullet {
-			  width: 20px;
-			  height: 20px;
-			  text-align: center;
-			  line-height: 20px;
-			  font-size: 12px;
-			  color:#000;
-			  opacity: 1;
-			  background: rgba(0,0,0,0.2);
-			}
-			.swiper4 .swiper-pagination-bullet-active {
-			  color:#fff;
-			  background: #007aff;
-			}
-			.swiper5 .swiper-slide {
-				width: 85%;
-				background: #eee;
-			}
-			.swiper5 .swiper-slide img{
-				width: 100%;
-				display:block;
-			}
-		</style>
+		
+		<script type="text/javascript" src="js/rem.min.js"></script>
+		<link rel="stylesheet" href="css/style.css" />
 	</head>
 	<body>
 		<header>
@@ -162,10 +19,10 @@
 		<div class="content">
 			<div class="swiper-container swiper1">
 				<div class="swiper-wrapper">
-					<div class="swiper-slide"><img src="img/01.png" /></div>
-					<div class="swiper-slide"><img src="img/02.png" /></div>
-					<div class="swiper-slide"><img src="img/03.png" /></div>
-					<div class="swiper-slide"><img src="img/04.png" /></div>
+					<div class="swiper-slide"><img src="img/01.jpg" /></div>
+					<div class="swiper-slide"><img src="img/02.jpg" /></div>
+					<div class="swiper-slide"><img src="img/03.jpg" /></div>
+					<div class="swiper-slide"><img src="img/04.jpg" /></div>
 				</div>
 				<!-- 如果需要分页器 -->
 				<div class="swiper-pagination"></div>
@@ -175,7 +32,7 @@
 				<div class="swiper-button-next"></div>
 
 				<!-- 如果需要滚动条 -->
-				<div class="swiper-scrollbar"></div>
+				<!-- <div class="swiper-scrollbar"></div> -->
 			</div>
 
 			<div class="swiper-container swiper2">
@@ -189,26 +46,26 @@
 
 			<div class="swiper-container swiper3">
 				<div class="swiper-wrapper">
-					<div class="swiper-slide"><img src="img/01.png" /></div>
-					<div class="swiper-slide"><img src="img/02.png" /></div>
-					<div class="swiper-slide"><img src="img/03.png" /></div>
-					<div class="swiper-slide"><img src="img/04.png" /></div>
+					<div class="swiper-slide"><img src="img/01.jpg" /></div>
+					<div class="swiper-slide"><img src="img/02.jpg" /></div>
+					<div class="swiper-slide"><img src="img/03.jpg" /></div>
+					<div class="swiper-slide"><img src="img/04.jpg" /></div>
 				</div>
 			</div>
 
 			<div class="swiper-container swiper4">
 				<div class="swiper-wrapper">
 					<div class="swiper-slide">
-						<div class="swiper-zoom-container"><img src="img/01.png" /></div>
+						<div class="swiper-zoom-container"><img src="img/01.jpg" /></div>
 					</div>
 					<div class="swiper-slide">
-						<div class="swiper-zoom-container"><img src="img/02.png" /></div>
+						<div class="swiper-zoom-container"><img src="img/02.jpg" /></div>
 					</div>
 					<div class="swiper-slide">
-						<div class="swiper-zoom-container"><img src="img/03.png" /></div>
+						<div class="swiper-zoom-container"><img src="img/03.jpg" /></div>
 					</div>
 					<div class="swiper-slide">
-						<div class="swiper-zoom-container"><img src="img/04.png" /></div>
+						<div class="swiper-zoom-container"><img src="img/04.jpg" /></div>
 					</div>
 				</div>
 				<!-- 如果需要分页器 -->
@@ -217,27 +74,21 @@
 			
 			<div class="swiper-container swiper5">
 				<div class="swiper-wrapper">
-					<div class="swiper-slide"><img src="img/01.png" /></div>
-					<div class="swiper-slide"><img src="img/02.png" /></div>
-					<div class="swiper-slide"><img src="img/03.png" /></div>
-					<div class="swiper-slide"><img src="img/04.png" /></div>
+					<div class="swiper-slide"><img src="img/01.jpg" /></div>
+					<div class="swiper-slide"><img src="img/02.jpg" /></div>
+					<div class="swiper-slide"><img src="img/03.jpg" /></div>
+					<div class="swiper-slide"><img src="img/04.jpg" /></div>
 				</div>
 			</div>
 		</div>
-
-		<script type="text/javascript" src="js/jquery.min.js"></script>
-		<script type="text/javascript" src="js/swiper.min.js"></script>
+		
+		<script type="text/javascript" src="js/united.js"></script>
 		<script>
 			var swiper = new Swiper('.swiper1', {
 				autoHeight: true, //自动高度,根据图片高度自适应
 				// 如果需要分页器
 				pagination: {
 					el: '.swiper-pagination',
-					// type: 'fraction',
-					// 					clickable: true,
-					// 					renderBullet: function (index, className) {
-					// 					  return '<span class="' + className + '">' + (index + 1) + '</span>';
-					// 					},
 				},
 
 				// 如果需要前进后退按钮
@@ -247,9 +98,9 @@
 				},
 
 				// 如果需要滚动条
-				scrollbar: {
-					el: '.swiper-scrollbar',
-				},
+				// scrollbar: {
+				// 	el: '.swiper-scrollbar',
+				// },
 			});
 
 			var swiper2 = new Swiper('.swiper2', {
@@ -272,9 +123,9 @@
 				centeredSlides: true,
 				slidesPerView: 'auto',
 				coverflowEffect: {
-					rotate: 40,
-					stretch: 0,
-					depth: 100,
+					rotate: 20,
+					stretch: 10,
+					depth: 300,
 					modifier: 1,
 					slideShadows: false,
 				},

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+		<title>标签</title>
+
+		<script type="text/javascript" src="js/rem.min.js"></script>
+		<link rel="stylesheet" href="css/style.css" />
+
+		<style>
+			.line {
+				width: 100%;
+				border-bottom: 1px solid #eeeeee;
+				margin-top: -0.03rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="img/header-back.png" onclick="history.back()" />
+			<label>标签</label>
+		</header>
+		<div class="content">
+			<div class="tabbar" id="tabbar">
+			</div>
+			<div class="line"></div>
+			<div id="a">11111</div>
+			<div id="a2" style="display: none;">2222</div>
+			<div id="a3" style="display: none;">3333</div>
+			<div id="a4" style="display: none;">4444</div>
+			<div id="a5" style="display: none;">55555</div>
+		</div>
+
+		<script type="text/javascript" src="js/united.js"></script>
+		<script>
+			var arr = ["相声", "小品", "评书", "戏剧", "歌曲"];
+			var ids = ["b", "b2", "b3", "b4", "b5"];
+			var href = ["a", "a2", "a3", "a4", "a5"];
+			var inptutParam = {
+				titles: arr,	//标签名称,必填
+				ids:ids,		//标签id,可选
+				hrefIds:href,	//关联的模块id,可选
+				curInd: 2		//默认高亮,可选
+			}
+			//初始化
+			tabbar.init(inptutParam, function(param){
+				console.log("返回当前标签的id："+param.id);
+				console.log("返回当前标签的下标："+param.index);
+			});
+			//设置高亮
+			tabbar.setCurItem(2);
+		</script>
+	</body>
+</html>
