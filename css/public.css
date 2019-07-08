@@ -1,170 +1,160 @@
-html,body{
-	width: 100%;
-	height: 100%;
-}
-body{
-	height: calc(100% - 0.8rem);
-}
-
-/* 自定义组件 */
-.blueBtn {
-	width: 90%;
-	height: 0.8rem;
-	border: 0;
-	border-radius: 0.12rem;
-	background-color: #15ACEB;
-	color: #fff;
-}
-
-
-/* 组件样式 */
-header {
-	position: fixed;
-	z-index: 999;
-	top: 0;
-	display: flex;
-	width: 100%;
-	background-color: #eee;
-	height: 0.8rem;
-	line-height: 0.8rem;
-	align-items: center;
-	justify-content: center;
-}
-
-header img {
-	width: 0.4rem;
-	height: 0.4rem;
-	flex-shrink: 0;
-	position: absolute;
-	left: 0.2rem;
-}
-
-header label {
-	font-size: 0.36rem;
-	line-height: 0.8rem;
-	width: 4.7rem;
-	text-align: center;
-}
-
-.content {
-	margin-top: 0.8rem;
-	height: 100%;
-	width: 100%;
-	text-align: center;
-}
-
-/* 修改weui默认样式 */
-.weui-cells {
-	margin: 0;
-}
-.weui-cell__bd{
-	text-align: left;
-}
-
-/* swiper样式 */
-.swiper-container {
-	margin-bottom: 0.5rem;
-}
-
-.swiper-button-prev,
-.swiper-container-rtl .swiper-button-next {
-	background-image: url(http://112.25.236.197:8100/html/wechat1/image/index/IS_left.png);
-	left: 2%;
-	right: auto;
-}
-
-.swiper-button-next,
-.swiper-container-rtl .swiper-button-prev {
-	background-image: url(http://112.25.236.197:8100/html/wechat1/image/index/IS_right.png);
-	right: 2%;
-	left: auto;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-	width: 0.2rem;
-	height: 0.2rem;
-	background-size: 0.2rem 0.2rem;
-	margin-top: -0.1rem;
-}
-
-:focus {
-	outline: none;
-}
-
-.swiper-slide img {
-	width: 100%;
-	display: block;
-}
-
-.swiper-container-horizontal>.swiper-pagination-bullets,
-.swiper-pagination-custom,
-.swiper-pagination-fraction {
-	bottom: 0;
-}
-
-.swiper-pagination {
-	height: 0.5rem;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.swiper2 {
-	height: 20px;
-	font-size: 12px;
-}
-
-.swiper3 {
-	width: 100%;
-}
-
-.swiper3 .swiper-slide {
-	background-position: center;
-	background-size: cover;
-	width: 70%;
-}
-
-.swiper3 .swiper-slide img {
-	border-radius: 5px;
-}
-
-.swiper4 .swiper-pagination-bullet {
-	width: 0.3rem;
-	height: 0.3rem;
-	line-height: 0.3rem;
-	text-align: center;
-	font-size: 12px;
-	color: #000;
-	opacity: 1;
-	background: rgba(0, 0, 0, 0.2);
-}
-
-.swiper4 .swiper-pagination-bullet-active {
-	color: #fff;
-	background: #007aff;
-}
-
-.swiper5 .swiper-slide {
-	width: 85%;
-	background: #eee;
-}
-
-/* aos样式 */
-.aos .title {
-	width: 0.4rem;
-    height: 100%;
-    margin: 0 auto;
-    font-size: 20px;
-	word-wrap: break-word;/*英文的时候需要加上这句，自动换行*/
-}
-
-.aos .item {
-	width: 2rem;
-	margin: 0.5rem auto;
-	padding: 0.8rem 0;
-	background: #ccc;
-	text-align: center;
-	color: #FFF;
-	font-size: 16px;
-}
+/* 禁止选中文本 */ 
+.usn{ 
+    -webkit-user-select:none; 
+    -moz-user-select:none; 
+    -ms-user-select:none; 
+    -o-user-select:none; 
+    user-select:none; 
+} 
+/* 浮动 */ 
+.fl { float: left; } 
+.fr { float: right; } 
+.cf { zoom: 1; } 
+.cf:after { 
+    content:"."; 
+    display:block; 
+    clear:both; 
+    visibility:hidden; 
+    height:0; 
+    overflow:hidden; 
+} 
+ 
+/* 元素类型 */ 
+.db { display: block; } 
+.dn { display: none; } 
+.di { display: inline } 
+.dib {display: inline-block;} 
+.transparent { opacity: 0 } 
+ 
+/*文字排版、颜色*/ 
+.f12 { font-size:12px } 
+.f14 { font-size:14px } 
+.f16 { font-size:16px } 
+.f18 { font-size:18px } 
+.f20 { font-size:20px } 
+.fb { font-weight:bold } 
+.fn { font-weight:normal } 
+.t2 { text-indent:2em } 
+.red,a.red { color:#cc0031 } 
+.darkblue,a.darkblue { color:#039 } 
+.gray,a.gray { color:#878787 } 
+.unl { text-decoration:underline; } 
+.no_unl { text-decoration:none; } 
+.tl { text-align: left; } 
+.tc { text-align: center; } 
+.tr { text-align: right; } 
+.tj { text-align: justify; text-justify: inter-ideograph; } 
+.wn { /* 强制不换行 */ 
+    word-wrap:normal; 
+    white-space:nowrap; 
+} 
+.wb { /* 强制换行 */ 
+    white-space:normal; 
+    word-wrap:break-word; 
+    word-break:break-all; 
+} 
+.wp { /* 保持空白序列*/ 
+    overflow:hidden;text-align:left;white-space:pre-wrap;word-wrap:break-word;word-break:break-all; 
+} 
+.wes { /* 多出部分用省略号表示 , 用于一行 */ 
+    overflow:hidden; 
+    word-wrap:normal; 
+    white-space:nowrap; 
+    text-overflow:ellipsis; 
+} 
+.wes-2 { /* 适用于webkit内核和移动端 */ 
+    display: -webkit-box; 
+    -webkit-box-orient: vertical; 
+    -webkit-line-clamp: 2; 
+    overflow: hidden; 
+}  
+.wes-3 { 
+    display: -webkit-box; 
+    -webkit-box-orient: vertical; 
+    -webkit-line-clamp: 3; 
+    overflow: hidden; 
+} 
+.wes-4 { 
+    display: -webkit-box; 
+    -webkit-box-orient: vertical; 
+    -webkit-line-clamp: 4; 
+    overflow: hidden; 
+} 
+ 
+/* 溢出样式 */ 
+.ofh { overflow: hidden; } 
+.ofs {overflow: scroll; } 
+.ofa {overflow: auto; } 
+.ofv {overflow: visible; } 
+ 
+/* 定位方式 */ 
+.ps {position: static; } 
+.pr {position: relative;zoom:1; } 
+.pa {position: absolute; } 
+.pf {position: fixed; } 
+ 
+/* 垂直对齐方式 */ 
+.vt {vertical-align: top; } 
+.vm {vertical-align: middle; } 
+.vb {vertical-align: bottom; } 
+ 
+/* 鼠标样式 */ 
+.csd {cursor: default; } 
+.csp {cursor: pointer; } 
+.csh {cursor: help; } 
+.csm {cursor: move; } 
+ 
+/* flex布局 */ 
+.df-sb { 
+    display:flex; 
+    align-items: center; 
+    justify-content: space-between; 
+} 
+.df-sa { 
+    display:flex; 
+    align-items: center; 
+    justify-content: space-around; 
+} 
+ 
+/* 垂直居中 */ 
+.df-c { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+} 
+.tb-c { 
+    text-align:center; 
+    display:table-cell; 
+    vertical-align:middle; 
+} 
+.ts-c { 
+    position: absolute; 
+    left: 50%; top: 50%; 
+    transform: translate(-50%, -50%); 
+} 
+.ts-mc { 
+    position: absolute; 
+    left: 0;right: 0; 
+    bottom: 0; top: 0; 
+    margin: auto; 
+} 
+ 
+/* 辅助 */ 
+.mask-fixed-wrapper { 
+    width: 100%; 
+    height: 100%; 
+    position: fixed; 
+    left:0;top:0; 
+    background: rgba(0, 0, 0, 0.65); 
+    z-index: 999; 
+} 
+.bg-cover { 
+    background-size: cover; 
+    background-repeat: no-repeat; 
+    background-position: center center; 
+} 
+.bg-cover-all { 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat; 
+    background-position: center center; 
+} 

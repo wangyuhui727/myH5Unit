@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+		<title>地图</title>
+
+		<script type="text/javascript" src="js/rem.min.js"></script>
+		<link rel="stylesheet" href="css/style.css" />
+
+		<style>
+			#container {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+			}
+			
+			.routeBtn {
+				position:absolute;
+				bottom: 20px;
+				left: 20px;
+				padding: 10px;
+				color: white;
+				background:#030b2a;
+				border-radius: 12px;
+			}
+			
+			.listDiv {
+				position:absolute;
+				bottom: 20px;
+				left: 20px;
+				padding: 10px;
+				color: white;
+				background: #001460;
+				display: none;
+				flex-direction: column;
+				min-width: 140px;
+				border-radius: 12px;
+			}
+			
+			.listDiv li {
+				padding: 5px 10px;
+			}
+			
+			.listDiv li:after {
+				content: "";
+				display: block;
+				margin-top: 5px;
+				height: 1px;
+				background: -webkit-linear-gradient(#001460, #0828a5, #001460);
+				background: -moz-linear-gradient(#001460, #0828a5, #001460);
+				background: linear-gradient(to right,#001460, #0828a5, #001460);
+			}
+			
+			ul li {
+			  list-style: none;
+			  padding: 0px;
+			  margin: 0px;
+			}
+			
+			.tools {
+				position:absolute;
+				bottom: 20px;
+				left: 185px;
+				padding: 10px;
+				display: none;
+				flex-direction: column;
+				min-width: 140px;
+				border-radius: 12px;
+				background: #fff;
+			}
+			
+			.tools li {
+				text-align: left;
+				padding: 5px 10px;
+				display: flex;
+				align-items: center;
+				border-bottom: 1px solid #ccc;
+			}
+			
+			.tools li div {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				margin-right: 5px;
+			}
+			.tools li .red {
+				background-color: red;
+			}
+			.tools li .green {
+				background-color: green;
+			}
+			.tools li .blue {
+				background-color: blue;
+			}
+			.tools li .yellow {
+				background-color: yellow;
+			}
+			.tools li input {
+				width: 12px;
+				height: 12px;
+				margin-right: 5px;
+			}
+			.curp, .curp label, .curp input{
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="images/header-back.png" onclick="history.back()" />
+			<label>地图示例</label>
+		</header>
+		<div class="content">
+			<div id="container"></div>
+			
+			<div class="routeBtn">
+				<span onclick="showBtns()">路线规划</span>
+				<span onclick="showList()">历史路线</span>
+			</div>
+			
+			<ul class="listDiv" id="planBtns">
+				<li onclick="drawRectangle()">绘制区域</li>
+				<li onclick="closeEdter()">结束编辑</li>
+				<li onclick="startEdter()">路线规划</li>
+				<li onclick="saveEdter()">保存路线</li>
+				<li onclick="cancelEdter()">取消绘制</li>
+			</ul>
+			
+			<ul class="listDiv" id="planList"></ul>
+			
+			<ul class="tools" id="planTools">
+				<li>
+					<div class="blue"></div>
+					<label>码头</label>
+				</li>
+				<li>
+					<div class="yellow"></div>
+					<label>机位</label>
+				</li>
+				<li class="curp" onclick="setMooringPoint()">
+					<div class="green"></div>
+					<label>锚泊点</label>
+				</li>
+				<li class="curp" onclick="setBlockedArea()">
+					<div class="red"></div>
+					<label>禁航区域</label>
+				</li>
+				<li class="curp" onclick="muiSelect(this)">
+					<input type="checkbox" value="false" />
+					<label>拖选</label>
+				</li>
+			</ul>
+		</div>
+		
+		<script type="text/javascript" src="js/unitedJQ.js"></script>
+		<script src="http://webapi.amap.com/maps?v=1.4.0&key=2a8648d9248167e00d8c0f07a80b10d7&plugin=AMap.MouseTool,AMap.CircleEditor"
+		 type="text/javascript"></script>
+		<script>
+			var mouseTool = ''; //鼠标工具
+			var polyBounds = {}; //坐标范围
+			var rectangle = ''; //矩形框
+			var xRate = 0;
+			var yRate = 0;
+			var xCount = 0;
+			var yCount = 0;
+			var interval = 500;
+			var pixels = [];
+			var CanvasLayer = '';
+			var rFlag = false;
+			var cFlag = false;
+			var isDragSel = false;
+			
+			
+			function showBtns(){
+				$("#planBtns").css("display","flex");
+			}
+			
+			function showList(){
+				getList();
+			}
+			
+			function startEdter(){
+				if(cFlag){
+					if($("#planTools").css("display") == 'none'){
+						$("#planTools").css("display","flex");
+					}
+					else{
+						$("#planTools").css("display","none");
+					}
+				}
+			}
+			
+			function saveEdter(){
+				if(cFlag){
+					//此处调用保存接口
+					$("#planBtns").css("display","none");
+					$("#planTools").css("display","none");
+				}
+			}
+			
+			function cancelEdter(){
+				if(rFlag){
+					RectangleEditor.close();
+					map.remove(rectangle);
+				}else if(cFlag){
+					map.remove(CanvasLayer);
+				}
+				$("#planBtns").css("display","none");
+				$("#planTools").css("display","none");
+			}  
+			
+			function showRoute(id){
+				//此处调用获取接口
+				$("#planList").css("display","none");
+			}
+			
+			function closeRoute(){
+				$("#planList").html("");
+				$("#planList").css("display","none");
+			}
+
+			function getList(){
+				//此处调用历史接口
+				var arr = [{name:"第一条",id:"001"},{name:"第二条",id:"002"},{name:"第三条",id:"003"}];
+				var temp = '';
+				for(var i=0,len = arr.length;i<len;i++){
+					temp += '<li onclick="showRoute('+arr[i].id+')">'+arr[i].name+'</li>'
+				}
+				temp += '<li onclick="closeRoute()">取消</li>'
+				$("#planList").append(temp);
+				$("#planList").css("display","flex");
+			}
+			
+			function setMooringPoint(){
+				
+			}
+			
+			function setBlockedArea(){
+				
+			}
+			
+			function muiSelect(e) {
+				//默认值是on 此处对应点选
+				var checked = $(e).children('input').val();
+				if(checked == "false"){ 
+					$(e).children('input').val('true');
+					$(e).children('input').prop("checked",true); 
+					
+					var mapOpts = {
+						dragEnable: false, // 地图是否可通过鼠标拖拽平移，默认为true
+					}
+					map.setStatus(mapOpts);
+					
+					map.on('mousedown', function(){
+						map.on('mousemove', showInfoClick);
+					});
+					
+					isDragSel = true;
+				}
+				else{
+					$(e).children('input').val('false');
+					$(e).children('input').prop("checked",false); 
+					
+					var mapOpts = {
+						dragEnable: true, // 地图是否可通过鼠标拖拽平移，默认为true
+					}
+					map.setStatus(mapOpts);
+					
+					isDragSel = false;
+				}
+			}
+
+
+			var map = new AMap.Map('container', {
+				resizeEnable: true,
+				zoom: 15,
+				center: [116.328911, 39.937229]
+			});
+			
+			var marker = new AMap.Marker({
+				icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+				position: [116.328911, 39.937229]
+			});
+			map.add(marker);
+			
+			
+			var marker = new AMap.Marker({
+				icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+				position: [116.342659, 39.946275]
+			});
+			map.add(marker);
+			
+			
+			AMap.plugin(["AMap.ControlBar"], function() {
+				var bar = new AMap.ControlBar();
+				map.addControl(bar);
+			});
+
+			mouseTool = new AMap.MouseTool(map);
+
+			mouseTool.on('draw', function(event) {
+				mouseTool.close(true);
+				rFlag = true;
+				polyBounds = event.obj.getBounds();
+				rectangle = new AMap.Rectangle({
+					bounds: polyBounds,
+					strokeColor: 'red',
+					strokeWeight: 6,
+					strokeOpacity: 0.5,
+					strokeDasharray: [30, 10],
+					strokeStyle: 'solid',
+					fillColor: 'blue',
+					fillOpacity: 0.5,
+					cursor: 'move',
+					zIndex: 50,
+					draggable: true
+				})
+				var overlays = map.getAllOverlays("polygon");
+				overlays.push(rectangle);
+				rectangle.setMap(map);
+
+				AMap.plugin(["AMap.RectangleEditor"], function() {
+					RectangleEditor = new AMap.RectangleEditor(map, rectangle);
+					RectangleEditor.open();
+				})
+			})
+
+			function drawRectangle() {
+				mouseTool.rectangle({
+					strokeColor: 'green',
+					strokeOpacity: 0.5,
+					strokeWeight: 6,
+					fillColor: 'blue',
+					fillOpacity: 0.5,
+					strokeStyle: 'solid',
+					draggable: true
+				})
+			}
+
+			function closeEdter() {
+				if(rFlag){
+					RectangleEditor.close();
+					polyBounds = rectangle.getBounds();
+					map.remove(rectangle);
+					rFlag = false;
+					cFlag = true;
+					CanvasLayerDraw();
+				}
+			}
+
+			function CanvasLayerDraw() {
+				var width = undefined,
+					height = undefined;
+				var coloredPixels = [];
+				var colors = ['#ACFFE9', '#540045', '#C60052', '#FF714B', '#EAFF87', '#ACFFE9'];
+				var currentPixel = 0;
+				var mousePosition = {
+					x: window.innerWidth / 2,
+					y: window.innerHeight / 2
+				};
+				var count = 0;
+				console.log(polyBounds);
+				var pLeftTop = [polyBounds.southwest.lng, polyBounds.northeast.lat];
+				var pRightTop = [polyBounds.northeast.lng, polyBounds.northeast.lat];
+				var dWidth = AMap.GeometryUtil.distance(pLeftTop, pRightTop);
+
+				var pLeftTop = [polyBounds.southwest.lng, polyBounds.northeast.lat];
+				var pLeftDown = [polyBounds.southwest.lng, polyBounds.southwest.lat];
+				var dHeight = AMap.GeometryUtil.distance(pLeftTop, pLeftDown);
+
+				console.log(dWidth, dHeight);
+
+				xCount = Math.floor(dWidth / interval);
+				yCount = Math.floor(dHeight / interval);
+
+				console.log(xCount, yCount);
+
+				var width = xCount * interval;
+				var height = yCount * interval;
+
+				console.log(width, height);
+
+				xRate = dWidth / width;
+				yRate = dHeight / height;
+
+				/*
+				 * 添加Canvas图层
+				 */
+				var canvas = document.createElement('canvas');
+				var ctx = canvas.getContext('2d')
+				canvas.width = width;
+				canvas.height = height;
+
+				var drawGrid = function drawGrid() {
+					ctx.clearRect(0, 0, width, height);
+
+					for (var i = 0, l = pixels.length; i < l; i++) {
+						ctx.globalAlpha = pixels[i][5];
+						ctx.fillStyle = pixels[i][4];
+						ctx.fillRect(pixels[i][0], pixels[i][1], pixels[i][2], pixels[i][3]);
+					}
+				};
+
+				var resize = function resize() {
+					pixels = [];
+					for (var y = 0; y < yCount; y++) {
+						for (var x = 0; x < xCount; x++) {
+							pixels.push([x * interval, y * interval, interval - 1, interval - 1, '#000', 1]);
+						}
+					}
+				};
+
+				var draw = function() {
+					drawGrid();
+					AMap.Util.requestAnimFrame(draw);
+				};
+
+				CanvasLayer = new AMap.CanvasLayer({
+					canvas: canvas,
+					bounds: polyBounds,
+					zooms: [3, 18],
+					zIndex: 9999
+				});
+
+				CanvasLayer.setMap(map);
+				map.on('click', showInfoClick);
+				
+				map.on('mouseup', function(){
+					map.off('mousemove', showInfoClick);
+				});
+				
+				resize();
+				draw();
+			}
+
+			function showInfoClick(e) {
+				if(isDragSel){
+					var curPoint = [e.lnglat.getLng(), e.lnglat.getLat()];
+					var point1 = [polyBounds.southwest.lng, e.lnglat.getLat()];
+					var dMarginLeft = AMap.GeometryUtil.distance(curPoint, point1);
+					
+					var point2 = [e.lnglat.getLng(), polyBounds.northeast.lat];
+					var dMarginTop = AMap.GeometryUtil.distance(curPoint, point2);
+					
+					console.log(dMarginLeft / xRate, dMarginTop / yRate);
+					
+					var index = Math.floor(dMarginTop / yRate / interval) * xCount + Math.floor(dMarginLeft / xRate / interval);
+					
+					if (pixels[index][4] == '#00f')
+						pixels[index][4] = '#000';
+					else
+						pixels[index][4] = '#00f';
+				}
+			}
+		</script>
+	</body>
+</html>

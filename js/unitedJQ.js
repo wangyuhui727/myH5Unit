@@ -11,4 +11,6 @@
 	document.write("<script language=javascript src='" + path + "/js/jquery.min.js?verson=" + version + "'></script>");
 	//动态效果
 	document.write("<script language=javascript src='" + path + "/js/aos.min.js?verson=" + version + "'></script>");
+	//拾色器
+	document.write("<script language=javascript src='" + path + "/js/bigcolorpicker.min.js?verson=" + version + "'></script>");
 })()

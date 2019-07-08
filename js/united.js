@@ -15,6 +15,8 @@
 	document.write("<script language=javascript src='" + path + "/js/swiper.min.js?verson=" + version + "'></script>");
 	//动态效果
 	document.write("<script language=javascript src='" + path + "/js/aos.min.js?verson=" + version + "'></script>");
+	//常用
+	document.write("<script language=javascript src='" + path + "/js/public.js?verson=" + version + "'></script>");
 	//vconsole
 	// document.write("<script language=javascript src='"+ path + "/js/vconsole.js?verson=" + version + "'></script>");
 })()
