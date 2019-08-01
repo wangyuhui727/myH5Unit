@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>工作台</title>
+
+		<style>
+			html,
+			body {
+				height: 100%;
+				padding: 0;
+				margin: 0;
+			}
+
+			.content {
+				height: 100%;
+				display: flex;
+				flex-direction: row;
+			}
+
+			.container {
+				height: calc(100% - 16px);
+				width: calc(80% - 16px);
+				margin: 8px;
+				background-color: #CCCCCC;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				overflow: hidden;
+			}
+
+			.boxList {
+				height: 100%;
+				width: 20%;
+				background-color: #eee;
+				overflow: auto;
+			}
+
+			.boxList .box {
+				height: 180px;
+				width: 90%;
+				background-color: #999;
+				color: #fff;
+				text-align: center;
+				border: 1px solid #000000;
+				margin-top: 5px;
+			}
+
+			.flex_r {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				width: 100%;
+				height: 100%;
+			}
+
+			.vertical__splitter,
+			.horizontal__splitter {
+				background-color: #fff;
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+				position: relative;
+				-ms-touch-action: none;
+				touch-action: none;
+				z-index: 1;
+			}
+
+			.vertical__splitter:after,
+			.vertical__splitter:before,
+			.horizontal__splitter:after,
+			.horizontal__splitter:before {
+				content: "";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				background-color: rgba(0, 0, 0, .15);
+				-webkit-transition: background-color .3s;
+				transition: background-color .3s;
+			}
+
+			:after,
+			:before {
+				text-decoration: inherit;
+				vertical-align: inherit;
+			}
+
+			.vertical__splitter {
+				width: 8px;
+				min-width: 1px;
+				cursor: col-resize;
+			}
+
+			.vertical__splitter:after,
+			.vertical__splitter:before {
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				width: 1px;
+				height: 30px;
+			}
+
+			.vertical__splitter:before {
+				margin-left: -2px;
+			}
+
+			.vertical__splitter:after {
+				margin-left: 1px;
+			}
+
+			.horizontal__splitter {
+				height: 8px;
+				width: 100%;
+				min-height: 1px;
+				cursor: row-resize;
+			}
+
+			.horizontal__splitter:after,
+			.horizontal__splitter:before {
+				-webkit-transform: translateX(-50%);
+				transform: translateX(-50%);
+				width: 30px;
+				height: 1px;
+			}
+
+			.horizontal__splitter:before {
+				margin-top: -2px;
+			}
+
+			.horizontal__splitter:after {
+				margin-top: 1px;
+			}
+
+			.schematic {
+				position: absolute;
+				background-color: rgba(0, 0, 0, 0.6);
+				display: none;
+				z-index: 2;
+				pointer-events: none;
+				/* 遮罩层穿透,允许元素不接收悬停/单击事件 */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<div class="container"></div>
+			<div class="boxList">
+				<div class="box" draggable="true">box-1</div>
+				<div class="box" draggable="true">box-2</div>
+				<div class="box" draggable="true">box-3</div>
+				<div class="box" draggable="true">box-4</div>
+				<div class="box" draggable="true">box-5</div>
+				<div class="box" draggable="true">box-6</div>
+				<div class="box" draggable="true">box-7</div>
+			</div>
+			<div class="schematic"></div>
+		</div>
+
+		<script>
+			const MINLEN = 50; //拖动的最小宽度/高度
+			const SPWDH = 8; //拖曳条的宽度/高度
+
+			var content = document.getElementsByClassName('content')[0];
+			var container = document.getElementsByClassName('container')[0];
+			var boxList = document.getElementsByClassName('boxList')[0];
+			var boxes = document.getElementsByClassName('box');
+			var schdiv = document.getElementsByClassName('schematic')[0];
+			var listLength = boxes.length;
+			var targetDropEle = null;
+
+			var dcHeight = boxes[0].clientHeight;
+			var dcWidth = boxes[0].clientWidth;
+
+			(function() {
+				for (let i = 0; i < listLength; i++) {
+					boxes[i].ondragstart = function(ev) {
+						ev.dataTransfer.effectAllowed = "move";
+						ev.dataTransfer.setData("Text", i + 1);
+						//dataTransfer.setData() 方法设置被拖数据的数据类型和值
+						//数据类型是text，值是可拖动元素的innerHTML
+						targetDropEle = ev.target;
+					}
+					boxes[i].ondragend = function(ev) {
+						/*拖拽结束*/
+						ev.dataTransfer.clearData("Text");
+						targetDropEle = null;
+						return false
+					};
+				}
+				boxList.ondragover = function() {
+					event.preventDefault();
+					window.event ? window.event.cancelBubble = true : e.stopPropagation();
+
+					if (schdiv.style.display == 'block') schdiv.style.display = 'none';
+				}
+				boxList.ondrop = function(ev) {
+					window.event ? window.event.cancelBubble = true : e.stopPropagation();
+
+					if (schdiv.style.display == 'block') schdiv.style.display = 'none';
+
+					/*拖拽元素进入目标元素头上，同时鼠标松开的时候*/
+					if (targetDropEle && targetDropEle.parentNode.className != 'boxList') {
+						ev.preventDefault();
+						if (targetDropEle.parentNode.parentNode.className == 'container') {
+							targetDropEle.parentNode.parentNode.removeChild(targetDropEle.parentNode);
+						} else {
+							var divs = targetDropEle.parentNode.parentNode.children;
+							var delDiv = '';
+							var delSpl = '';
+							var curDiv = '';
+
+							for (var i = 0, len = divs.length; i < len; i++) {
+								if (divs[i].className.indexOf("splitter") >= 0) {
+									delSpl = divs[i];
+								} else if (targetDropEle.parentNode == divs[i]) {
+									delDiv = divs[i];
+								} else {
+									divs[i].style.width = '100%';
+									divs[i].style.height = '100%';
+									curDiv = divs[i];
+								}
+							}
+
+							if (delSpl) targetDropEle.parentNode.parentNode.removeChild(delSpl);
+							if (delDiv) targetDropEle.parentNode.parentNode.removeChild(delDiv);
+
+							if (curDiv.children.length == 1) {
+								curDiv.parentNode.appendChild(curDiv.children[0]);
+								curDiv.parentNode.removeChild(curDiv);
+							} else {
+								curDiv.style.width = curDiv.parentNode.style.width;
+								curDiv.style.height = curDiv.parentNode.style.height;
+								curDiv.parentNode.parentNode.replaceChild(curDiv, curDiv.parentNode);
+							}
+						}
+
+						if (ev.target.classList.contains("box")) {
+							ev.target.parentNode.insertBefore(targetDropEle, ev.target);
+						} else {
+							ev.target.append(targetDropEle);
+						}
+						targetDropEle.style.width = '90%';
+						targetDropEle.style.height = '180px';
+					}
+				}
+				
+				// container.onmousedown = function(ev){
+				// 	console.log(111);
+				// 	console.log(ev.target);
+				// 	schdiv.appendChild(ev.target);
+				// 	console.log(schdiv);
+				// }
+
+				container.ondragstart = function(ev) {
+					
+					
+					ev.dataTransfer.effectAllowed = "copy";
+					
+					// console.log(targetDropEle);
+					// console.log(targetDropEle.parentNode);
+					// console.log(targetDropEle.parentNode.parentNode);
+					targetDropEle.parentNode.parentNode.removeChild(targetDropEle.parentNode);
+					// if (targetDropEle.parentNode.parentNode.className == 'container') {
+					// 	targetDropEle.parentNode.parentNode.removeChild(targetDropEle.parentNode);
+					// } else {
+					// 	var divs = targetDropEle.parentNode.parentNode.children;
+					// 	var delDiv = '';
+					// 	var delSpl = '';
+					// 	var curDiv = '';
+					// 
+					// 	for (var i = 0, len = divs.length; i < len; i++) {
+					// 		if (divs[i].className.indexOf("splitter") >= 0) {
+					// 			delSpl = divs[i];
+					// 		} else if (targetDropEle.parentNode == divs[i]) {
+					// 			delDiv = divs[i];
+					// 		} else {
+					// 			divs[i].style.width = '100%';
+					// 			divs[i].style.height = '100%';
+					// 			curDiv = divs[i];
+					// 		}
+					// 	}
+					// 
+					// 	if (delSpl) targetDropEle.parentNode.parentNode.removeChild(delSpl);
+					// 	if (delDiv) targetDropEle.parentNode.parentNode.removeChild(delDiv);
+					// 
+					// 	if (curDiv.children.length == 1) {
+					// 		curDiv.parentNode.appendChild(curDiv.children[0]);
+					// 		curDiv.parentNode.removeChild(curDiv);
+					// 	} else {
+					// 		curDiv.style.width = curDiv.parentNode.style.width;
+					// 		curDiv.style.height = curDiv.parentNode.style.height;
+					// 		curDiv.parentNode.parentNode.replaceChild(curDiv, curDiv.parentNode);
+					// 	}
+					// }
+				}
+				container.ondragover = function(ev) {
+					/*拖拽元素进入目标元素上移动*/
+					event.preventDefault();
+					window.event ? window.event.cancelBubble = true : e.stopPropagation();
+
+					var targetNode = ev.target.parentNode;
+					var tcHeight = ev.target.clientHeight;
+					var tcWidth = ev.target.clientWidth;
+
+					if (ev.target.className == "container") {
+						schdiv.style.width = ev.target.clientWidth + 'px';
+						schdiv.style.height = ev.target.clientHeight + 'px';
+						schdiv.style.top = '8px';
+						schdiv.style.left = '8px';
+						schdiv.style.display = 'block';
+					} else if (ev.target.className == "vertical__splitter") {
+						schdiv.style.width = dcWidth + 'px';
+						schdiv.style.height = ev.target.clientHeight + 'px';
+						schdiv.style.top = ev.target.offsetTop + 'px';
+						schdiv.style.left = ev.target.offsetLeft - dcWidth / 2 + 'px';
+						schdiv.style.display = 'block';
+					} else if (ev.target.className == "horizontal__splitter") {
+						schdiv.style.width = ev.target.clientWidth + 'px';
+						schdiv.style.height = dcHeight + 'px';
+						schdiv.style.top = ev.target.offsetTop - dcHeight / 2 + 'px';
+						schdiv.style.left = ev.target.offsetLeft + 'px';
+						schdiv.style.display = 'block';
+					} else {
+						if (ev.offsetY < tcHeight / 2 && ev.offsetX > tcWidth / 3 * 1 && ev.offsetX < tcWidth / 3 * 2) {
+							schdiv.style.width = targetNode.clientWidth + 'px';
+							schdiv.style.height = targetNode.clientHeight / 2 + 'px';
+							schdiv.style.top = targetNode.offsetTop + 'px';
+							schdiv.style.left = targetNode.offsetLeft + 'px';
+							schdiv.style.display = 'block';
+						} else if (ev.offsetX > tcWidth / 2 && ev.offsetY > tcHeight / 3 * 1 && ev.offsetY < tcHeight / 3 * 2) {
+							schdiv.style.width = targetNode.clientWidth / 2 + 'px';
+							schdiv.style.height = targetNode.clientHeight + 'px';
+							schdiv.style.top = targetNode.offsetTop + 'px';
+							schdiv.style.left = targetNode.offsetLeft + targetNode.clientWidth / 2 + 'px';
+							schdiv.style.display = 'block';
+						} else if (ev.offsetY > tcHeight / 2 && ev.offsetX > tcWidth / 3 * 1 && ev.offsetX < tcWidth / 3 * 2) {
+							schdiv.style.width = targetNode.clientWidth + 'px';
+							schdiv.style.height = targetNode.clientHeight / 2 + 'px';
+							schdiv.style.top = targetNode.offsetTop + targetNode.clientHeight / 2 + 'px';
+							schdiv.style.left = targetNode.offsetLeft + 'px';
+							schdiv.style.display = 'block';
+						} else if (ev.offsetX < tcWidth / 2 && ev.offsetY > tcHeight / 3 * 1 && ev.offsetY < tcHeight / 3 * 2) {
+							schdiv.style.width = targetNode.clientWidth / 2 + 'px';
+							schdiv.style.height = targetNode.clientHeight + 'px';
+							schdiv.style.top = targetNode.offsetTop + 'px';
+							schdiv.style.left = targetNode.offsetLeft + 'px';
+						}
+					}
+				}
+				container.ondragenter = function(ev) {
+					/*拖拽元素进入目标元素*/
+					// ev.target.style.opacity = 0.5
+				}
+				container.ondrop = function(ev) {
+					window.event ? window.event.cancelBubble = true : e.stopPropagation();
+
+					if (schdiv.style.display == 'block') schdiv.style.display = 'none';
+
+					if (targetDropEle) {
+						// 						if (targetDropEle.parentNode.className != 'boxList') {
+						// 							targetDropEle.parentNode.parentNode.removeChild(targetDropEle.parentNode);
+						// // 							var temp = targetDropEle;
+						// // 							var tempT = ev.target;
+						// // 							var tParent = ev.target.parentNode;
+						// // 							var dParent = targetDropEle.parentNode;
+						// // 
+						// // 							tParent.appendChild(temp);
+						// // 							tParent.removeChild(ev.target);
+						// // 
+						// // 							dParent.appendChild(tempT);
+						// 						}
+
+						var parentNode = ev.target.parentNode;
+						var tcHeight = ev.target.clientHeight;
+						var tcWidth = ev.target.clientWidth;
+
+						if (ev.target.className == "container") { //第一个模块
+							targetDropEle.parentNode.removeChild(targetDropEle);
+							container.appendChild(targetDropEle);
+							targetDropEle.style.width = '100%';
+							targetDropEle.style.height = '100%';
+
+							var tardiv = document.createElement("div");
+							tardiv.classList.add("flex_r");
+							ev.target.appendChild(tardiv);
+							tardiv.appendChild(targetDropEle);
+						} else if (ev.target.className == "vertical__splitter") { //垂直线
+							targetDropEle.parentNode.removeChild(targetDropEle);
+							container.appendChild(targetDropEle);
+							targetDropEle.style.width = '100%';
+							targetDropEle.style.height = '100%';
+
+							ev.target.previousSibling.style.width = (ev.target.previousSibling.clientWidth - dcWidth / 2) / ev.target.parentNode
+								.clientWidth * 100 + "%";
+							ev.target.nextSibling.style.width = (ev.target.nextSibling.clientWidth + dcWidth / 2) / ev.target.parentNode.clientWidth *
+								100 + "%";
+
+							tarNode = ev.target.nextSibling;
+
+							var pardiv = document.createElement("div");
+							pardiv.style.height = tarNode.style.height;
+							pardiv.style.width = tarNode.style.width;
+							pardiv.classList.add("flex_r");
+							ev.target.parentNode.insertBefore(pardiv, tarNode);
+
+							var tardiv = document.createElement("div");
+							tardiv.style.width = dcWidth / pardiv.clientWidth * 100 + "%";
+							tardiv.classList.add("flex_r");
+							pardiv.appendChild(tardiv);
+							tardiv.appendChild(targetDropEle);
+
+							var splitter = document.createElement("div");
+							splitter.className = "vertical__splitter";
+							pardiv.appendChild(splitter);
+
+							var dropdiv = document.createElement("div");
+							dropdiv = tarNode;
+							dropdiv.style.width = (ev.target.nextSibling.clientWidth - tardiv.clientWidth - 8) / pardiv.clientWidth * 100 +
+								"%";
+							dropdiv.classList.add("flex_r");
+							pardiv.appendChild(dropdiv);
+
+							verticalFun(ev.target);
+							verticalFun(splitter);
+						} else if (ev.target.className == "horizontal__splitter") { //水平线
+							targetDropEle.parentNode.removeChild(targetDropEle);
+							container.appendChild(targetDropEle);
+							targetDropEle.style.width = '100%';
+							targetDropEle.style.height = '100%';
+
+							ev.target.previousSibling.style.height = (ev.target.previousSibling.clientHeight - dcHeight / 2) / ev.target.parentNode
+								.clientHeight * 100 + "%";
+							ev.target.nextSibling.style.height = (ev.target.nextSibling.clientHeight + dcHeight / 2) / ev.target.parentNode
+								.clientHeight * 100 + "%";
+
+							tarNode = ev.target.nextSibling;
+
+							var pardiv = document.createElement("div");
+							pardiv.style.height = tarNode.style.height;
+							pardiv.style.width = tarNode.style.width;
+							pardiv.classList.add("flex_r");
+							ev.target.parentNode.insertBefore(pardiv, tarNode);
+
+							var tardiv = document.createElement("div");
+							tardiv.style.height = dcHeight / pardiv.clientHeight * 100 + "%";
+							tardiv.classList.add("flex_r");
+							pardiv.appendChild(tardiv);
+							tardiv.appendChild(targetDropEle);
+
+							var splitter = document.createElement("div");
+							splitter.className = "horizontal__splitter";
+							pardiv.appendChild(splitter);
+
+							var dropdiv = document.createElement("div");
+							dropdiv = tarNode;
+							dropdiv.style.height = (ev.target.nextSibling.clientHeight - tardiv.clientHeight - 8) / pardiv.clientHeight *
+								100 + "%";
+							dropdiv.classList.add("flex_r");
+							pardiv.appendChild(dropdiv);
+
+							horizontalFun(ev.target);
+							horizontalFun(splitter);
+						} else {
+							if (ev.offsetY < tcHeight / 2 && ev.offsetX > tcWidth / 3 * 1 && ev.offsetX < tcWidth / 3 * 2) { //上
+								targetDropEle.parentNode.removeChild(targetDropEle);
+								container.appendChild(targetDropEle);
+								targetDropEle.style.width = '100%';
+								targetDropEle.style.height = '100%';
+
+								var tardiv = document.createElement("div");
+								tardiv.style.height = 'calc(50% - 4px)';
+								tardiv.classList.add("flex_r");
+								parentNode.appendChild(tardiv);
+								tardiv.appendChild(targetDropEle);
+
+								var splitter = document.createElement("div");
+								splitter.className = "horizontal__splitter";
+								parentNode.appendChild(splitter);
+
+								var dropdiv = document.createElement("div");
+								dropdiv.style.height = 'calc(50% - 4px)';
+								dropdiv.classList.add("flex_r");
+								parentNode.appendChild(dropdiv);
+								dropdiv.appendChild(ev.target);
+
+								horizontalFun(splitter);
+							} else if (ev.offsetX > tcWidth / 2 && ev.offsetY > tcHeight / 3 * 1 && ev.offsetY < tcHeight / 3 * 2) { //右
+								targetDropEle.parentNode.removeChild(targetDropEle);
+								container.appendChild(targetDropEle);
+								targetDropEle.style.width = '100%';
+								targetDropEle.style.height = '100%';
+
+								var tardiv = document.createElement("div");
+								tardiv.style.width = 'calc(50% - 4px)';
+								tardiv.classList.add("flex_r");
+								parentNode.appendChild(tardiv);
+								tardiv.appendChild(ev.target);
+
+								var splitter = document.createElement("div");
+								splitter.className = "vertical__splitter";
+								parentNode.appendChild(splitter);
+
+								var dropdiv = document.createElement("div");
+								dropdiv.style.width = 'calc(50% - 4px)';
+								dropdiv.classList.add("flex_r");
+								parentNode.appendChild(dropdiv);
+								dropdiv.appendChild(targetDropEle);
+
+								verticalFun(splitter);
+
+							} else if (ev.offsetY > tcHeight / 2 && ev.offsetX > tcWidth / 3 * 1 && ev.offsetX < tcWidth / 3 * 2) { //下
+								targetDropEle.parentNode.removeChild(targetDropEle);
+								container.appendChild(targetDropEle);
+								targetDropEle.style.width = '100%';
+								targetDropEle.style.height = '100%';
+
+								var tardiv = document.createElement("div");
+								tardiv.style.height = 'calc(50% - 4px)';
+								tardiv.classList.add("flex_r");
+								parentNode.appendChild(tardiv);
+								tardiv.appendChild(ev.target);
+
+								var splitter = document.createElement("div");
+								splitter.className = "horizontal__splitter";
+								parentNode.appendChild(splitter);
+
+								var dropdiv = document.createElement("div");
+								dropdiv.style.height = 'calc(50% - 4px)';
+								dropdiv.classList.add("flex_r");
+								parentNode.appendChild(dropdiv);
+								dropdiv.appendChild(targetDropEle);
+
+								horizontalFun(splitter);
+
+							} else if (ev.offsetX < tcWidth / 2 && ev.offsetY > tcHeight / 3 * 1 && ev.offsetY < tcHeight / 3 * 2) { //左
+								targetDropEle.parentNode.removeChild(targetDropEle);
+								container.appendChild(targetDropEle);
+								targetDropEle.style.width = '100%';
+								targetDropEle.style.height = '100%';
+
+								var tardiv = document.createElement("div");
+								tardiv.style.width = 'calc(50% - 4px)';
+								tardiv.classList.add("flex_r");
+								parentNode.appendChild(tardiv);
+								tardiv.appendChild(targetDropEle);
+
+								var splitter = document.createElement("div");
+								splitter.className = "vertical__splitter";
+								parentNode.appendChild(splitter);
+
+								var dropdiv = document.createElement("div");
+								dropdiv.style.width = 'calc(50% - 4px)';
+								dropdiv.classList.add("flex_r");
+								parentNode.appendChild(dropdiv);
+								dropdiv.appendChild(ev.target);
+
+								verticalFun(splitter);
+							}
+						}
+					}
+				}
+				content.ondragover = function(ev) {
+					/*拖拽元素进入目标元素上移动*/
+					event.preventDefault();
+
+					var btop = SPWDH; //上边距
+					var bleft = SPWDH; //左边距
+					var bright = container.clientWidth + SPWDH; //右边距
+					var bbottom = container.clientHeight + SPWDH; //下边距
+					var len = container.children.length; //子元素个数
+
+					if (len == 0) {
+						schdiv.style.width = container.clientWidth + 'px';
+						schdiv.style.height = container.clientHeight + 'px';
+						schdiv.style.top = '8px';
+						schdiv.style.left = '8px';
+						schdiv.style.display = 'block';
+					} else {
+						if (ev.offsetY < btop && ev.offsetX > bleft && ev.offsetX < bright) {
+							schdiv.style.width = container.clientWidth + 'px';
+							schdiv.style.height = container.clientHeight / 2 + 'px';
+							schdiv.style.top = '8px';
+							schdiv.style.left = '8px';
+							schdiv.style.display = 'block';
+						} else if (ev.offsetX > bright && ev.offsetY > btop && ev.offsetY < bbottom) {
+							schdiv.style.width = container.clientWidth / 2 + 'px';
+							schdiv.style.height = container.clientHeight + 'px';
+							schdiv.style.top = '8px';
+							schdiv.style.left = container.clientWidth / 2 + 8 + 'px';
+							schdiv.style.display = 'block';
+						} else if (ev.offsetY > bbottom && ev.offsetX > bleft && ev.offsetX < bright) {
+							schdiv.style.width = container.clientWidth + 'px';
+							schdiv.style.height = container.clientHeight / 2 + 'px';
+							schdiv.style.top = container.clientHeight / 2 + 8 + 'px';
+							schdiv.style.left = '8px';
+							schdiv.style.display = 'block';
+						} else if (ev.offsetX < bleft && ev.offsetY > btop && ev.offsetY < bbottom) {
+							schdiv.style.width = container.clientWidth / 2 + 'px';
+							schdiv.style.height = container.clientHeight + 'px';
+							schdiv.style.top = '8px';
+							schdiv.style.left = '8px';
+							schdiv.style.display = 'block';
+						}
+					}
+				}
+				content.ondragenter = function(ev) {
+					/*拖拽元素进入目标元素*/
+					// ev.target.style.opacity = 0.5
+				}
+				content.ondrop = function(ev) {
+					if (schdiv.style.display == 'block') schdiv.style.display = 'none';
+
+					var btop = SPWDH; //上边距
+					var bleft = SPWDH; //左边距
+					var bright = container.clientWidth + SPWDH; //右边距
+					var bbottom = container.clientHeight + SPWDH; //下边距
+					var len = container.children.length; //子元素个数
+
+					targetDropEle.style.width = '100%';
+					targetDropEle.style.height = '100%';
+
+					if (len == 0) { //首个,放在中间
+						var tardiv = document.createElement("div");
+						tardiv.classList.add("flex_r");
+						container.appendChild(tardiv);
+						tardiv.appendChild(targetDropEle);
+					} else {
+						var parentNode = ev.target.children[0];
+						var childNote = ev.target.children[0].children[0];
+
+						if (ev.offsetY < btop && ev.offsetX > bleft && ev.offsetX < bright) { //上
+							var pardiv = document.createElement("div");
+							pardiv.classList.add("flex_r");
+							parentNode.appendChild(pardiv);
+
+							var tardiv = document.createElement("div");
+							tardiv.style.height = 'calc(50% - 4px)';
+							tardiv.classList.add("flex_r");
+							pardiv.appendChild(tardiv);
+							tardiv.appendChild(targetDropEle);
+
+							var splitter = document.createElement("div");
+							splitter.className = "horizontal__splitter";
+							pardiv.appendChild(splitter);
+
+							var dropdiv = document.createElement("div");
+							dropdiv = childNote;
+							dropdiv.style.height = 'calc(50% - 4px)';
+							dropdiv.classList.add("flex_r");
+							pardiv.appendChild(dropdiv);
+
+							horizontalFun(splitter);
+
+						} else if (ev.offsetX > bright && ev.offsetY > btop && ev.offsetY < bbottom) { //右
+							var pardiv = document.createElement("div");
+							pardiv.classList.add("flex_r");
+							parentNode.appendChild(pardiv);
+
+							var tardiv = document.createElement("div");
+							tardiv = childNote;
+							tardiv.style.width = 'calc(50% - 4px)';
+							tardiv.classList.add("flex_r");
+							pardiv.appendChild(tardiv);
+
+							var splitter = document.createElement("div");
+							splitter.className = "vertical__splitter";
+							pardiv.appendChild(splitter);
+
+							var dropdiv = document.createElement("div");
+							dropdiv.style.width = 'calc(50% - 4px)';
+							dropdiv.classList.add("flex_r");
+							pardiv.appendChild(dropdiv);
+							dropdiv.appendChild(targetDropEle);
+
+							verticalFun(splitter);
+
+						} else if (ev.offsetY > bbottom && ev.offsetX > bleft && ev.offsetX < bright) { //下
+							var pardiv = document.createElement("div");
+							pardiv.classList.add("flex_r");
+							parentNode.appendChild(pardiv);
+
+							var tardiv = document.createElement("div");
+							tardiv = childNote;
+							tardiv.style.height = 'calc(50% - 4px)';
+							tardiv.classList.add("flex_r");
+							pardiv.appendChild(tardiv);
+
+							var splitter = document.createElement("div");
+							splitter.className = "horizontal__splitter";
+							pardiv.appendChild(splitter);
+
+							var dropdiv = document.createElement("div");
+							dropdiv.style.height = 'calc(50% - 4px)';
+							dropdiv.classList.add("flex_r");
+							pardiv.appendChild(dropdiv);
+							dropdiv.appendChild(targetDropEle);
+
+							horizontalFun(splitter);
+
+						} else if (ev.offsetX < bleft && ev.offsetY > btop && ev.offsetY < bbottom) { //左
+							var pardiv = document.createElement("div");
+							pardiv.classList.add("flex_r");
+							parentNode.appendChild(pardiv);
+
+							var tardiv = document.createElement("div");
+							tardiv.style.width = 'calc(50% - 4px)';
+							tardiv.classList.add("flex_r");
+							pardiv.appendChild(tardiv);
+							tardiv.appendChild(targetDropEle);
+
+							var splitter = document.createElement("div");
+							splitter.className = "vertical__splitter";
+							pardiv.appendChild(splitter);
+
+							var dropdiv = document.createElement("div");
+							dropdiv = childNote;
+							dropdiv.style.width = 'calc(50% - 4px)';
+							dropdiv.classList.add("flex_r");
+							pardiv.appendChild(dropdiv);
+
+							verticalFun(splitter);
+						}
+					}
+				}
+			})();
+
+			function horizontalFun(splitter) {
+				splitter.onmousedown = function(e) {
+					var prediv = splitter.previousSibling;
+					var nextpdiv = splitter.nextSibling;
+					var THeight = splitter.parentNode.clientHeight;
+
+					var startY = e.clientY;
+					splitter.top = splitter.offsetTop - splitter.parentNode.offsetTop;
+
+					document.onmousemove = function(e) {
+						var endY = e.clientY;
+						var moveLen = splitter.top + (endY - startY);
+						// 最小宽度
+						var maxT = THeight - splitter.offsetHeight;
+						if (moveLen < MINLEN) moveLen = MINLEN;
+						if (moveLen > maxT - MINLEN) moveLen = maxT - MINLEN;
+
+						var tarHeight = ((moveLen / THeight) * 100).toFixed(4);
+						var splHeight = ((SPWDH / THeight) * 100).toFixed(4);
+						var dropHeight = (100 - tarHeight - splHeight).toFixed(4);
+
+						splitter.style.top = moveLen;
+						prediv.style.height = tarHeight + "%";
+						nextpdiv.style.height = dropHeight + "%";
+
+						reloadBottom();
+					}
+					document.onmouseup = function(evt) {
+						document.onmousemove = null;
+						document.onmouseup = null;
+						splitter.releaseCapture && splitter.releaseCapture();
+					}
+					splitter.setCapture && splitter.setCapture();
+					return false;
+				}
+			}
+
+			function verticalFun(splitter) {
+				splitter.onmousedown = function(e) {
+					var prediv = splitter.previousSibling;
+					var nextpdiv = splitter.nextSibling;
+					var TWidth = splitter.parentNode.clientWidth;
+
+					var startX = e.clientX;
+					splitter.left = splitter.offsetLeft - splitter.parentNode.offsetLeft;
+
+					document.onmousemove = function(e) {
+						var endX = e.clientX;
+						var moveLen = splitter.left + (endX - startX);
+						// 最小宽度
+						var maxT = TWidth - splitter.offsetWidth;
+						if (moveLen < MINLEN) moveLen = MINLEN;
+						if (moveLen > maxT - MINLEN) moveLen = maxT - MINLEN;
+
+						var tarWidth = ((moveLen / TWidth) * 100).toFixed(4);
+						var splWidth = ((SPWDH / TWidth) * 100).toFixed(4);
+						var dropWidth = (100 - tarWidth - splWidth).toFixed(4);
+
+						splitter.style.left = moveLen;
+						prediv.style.width = tarWidth + "%";
+						nextpdiv.style.width = dropWidth + "%";
+
+						reloadRight();
+					}
+					document.onmouseup = function(evt) {
+						document.onmousemove = null;
+						document.onmouseup = null;
+						splitter.releaseCapture && splitter.releaseCapture();
+					}
+					splitter.setCapture && splitter.setCapture();
+					return false;
+				}
+			}
+
+			function reloadRight() {
+				var divs = document.getElementsByClassName("vertical__splitter");
+				for (var i = 0, len = divs.length; i < len; i++) {
+					var prediv = divs[i].previousElementSibling;
+					var nextpdiv = divs[i].nextElementSibling;
+					//此处标记一下,使用getBoundingClientRect().width替代clientWidth的原因是后者得到的是经过四舍五入的整数,会导致计算有变差
+					var TWidth = divs[i].parentNode.getBoundingClientRect().width;
+					var tarWidth = prediv.getBoundingClientRect().width;
+					var dropWidth = TWidth - tarWidth - SPWDH;
+					nextpdiv.style.width = ((dropWidth / TWidth) * 100).toFixed(4) + '%';
+				}
+			}
+
+			function reloadBottom() {
+				var divs = document.getElementsByClassName("horizontal__splitter");
+				for (var i = 0, len = divs.length; i < len; i++) {
+					var prediv = divs[i].previousElementSibling;
+					var nextpdiv = divs[i].nextElementSibling;
+
+					var THeight = divs[i].parentNode.getBoundingClientRect().height;
+					var tarHeight = prediv.getBoundingClientRect().height;
+					var dropHeight = THeight - tarHeight - SPWDH;
+					nextpdiv.style.height = ((dropHeight / THeight) * 100).toFixed(4) + '%';
+				}
+			}
+		</script>
+	</body>
+</html>

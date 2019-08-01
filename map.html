@@ -172,6 +172,9 @@
 			var cFlag = false;
 			var isDragSel = false;
 			
+			$(".red").bigColorpicker(function(el, color) {
+				$(el).css("background-color", color);
+			});
 			
 			function showBtns(){
 				$("#planBtns").css("display","flex");
@@ -269,6 +272,7 @@
 					map.setStatus(mapOpts);
 					
 					isDragSel = false;
+					map.off('mousemove', showInfoClick);
 				}
 			}
 
@@ -285,6 +289,12 @@
 			});
 			map.add(marker);
 			
+			
+			var marker = new AMap.Marker({
+				icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+				position: [116.335785, 39.941752]
+			});
+			map.add(marker);
 			
 			var marker = new AMap.Marker({
 				icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
@@ -405,9 +415,26 @@
 
 				var resize = function resize() {
 					pixels = [];
+
+					var sg = polyBounds.southwest.lng;
+					var ng = polyBounds.northeast.lng;
+					var st = polyBounds.southwest.lat;
+					var nt = polyBounds.northeast.lat;
+					
+					var xx = (ng - sg)/xCount;
+					var yy = (st - nt)/yCount;
+					
+					var arr = [];
 					for (var y = 0; y < yCount; y++) {
 						for (var x = 0; x < xCount; x++) {
-							pixels.push([x * interval, y * interval, interval - 1, interval - 1, '#000', 1]);
+							arr = [((sg+xx*(x+1))+(sg+xx*x))/2,((nt+yy*y)+(nt+yy*(y+1)))/2];
+
+							var marker = new AMap.Marker({
+								icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+								position: arr
+							});
+							map.add(marker);
+							pixels.push([x * interval, y * interval, interval - 1, interval - 1, '#000', 0.1,arr]);
 						}
 					}
 				};
@@ -436,7 +463,9 @@
 			}
 
 			function showInfoClick(e) {
+				console.log(222222222222);
 				if(isDragSel){
+					console.log(11111111111111);
 					var curPoint = [e.lnglat.getLng(), e.lnglat.getLat()];
 					var point1 = [polyBounds.southwest.lng, e.lnglat.getLat()];
 					var dMarginLeft = AMap.GeometryUtil.distance(curPoint, point1);

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+		<title>transition</title>
+
+		<script type="text/javascript" src="js/rem.min.js"></script>
+		<link rel="stylesheet" href="css/style.css" />
+
+		<style>
+			.trans {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+			}
+			.trans .left {
+				width: 80%;
+				height: 100%;
+				background-color: blue;
+				transition:width 0.5s linear 200ms;
+			}
+			.trans .right {
+				width: 20%;
+				height: 100%;
+				background-color: green;
+				transition:width 0.5s linear 200ms;
+			}
+			.trans .btn {
+				position: absolute;
+				margin: 10% 45%;
+				width: 2rem;
+				height: 1rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="images/header-back.png" onclick="history.back()" />
+			<label>transition</label>
+		</header>
+		<div class="content trans">
+			<div class="left">我是左边</div>
+			<div class="right">我是右边</div>
+			<button class="btn" type="button">点击隐藏右边</button>
+		</div>
+
+		<script type="text/javascript" src="js/united.js"></script>
+		<script>
+			var btn = document.getElementsByClassName('btn')[0];
+			var left = document.getElementsByClassName('left')[0];
+			var right = document.getElementsByClassName('right')[0];
+			
+			btn.addEventListener('click',function(){
+				if(btn.innerHTML == "点击隐藏右边"){
+					btn.innerHTML = "点击显示右边";
+					left.style.width = "100%";
+					right.style.width = "0";
+				} else {
+					btn.innerHTML = "点击隐藏右边";
+					left.style.width = "80%";
+					right.style.width = "20%";
+				}
+			})
+		</script>
+	</body>
+</html>
