@@ -241,7 +241,7 @@
 						targetDropEle.style.height = '180px';
 					}
 				}
-				
+
 				// container.onmousedown = function(ev){
 				// 	console.log(111);
 				// 	console.log(ev.target);
@@ -250,10 +250,10 @@
 				// }
 
 				container.ondragstart = function(ev) {
-					
-					
+
+
 					ev.dataTransfer.effectAllowed = "copy";
-					
+
 					// console.log(targetDropEle);
 					// console.log(targetDropEle.parentNode);
 					// console.log(targetDropEle.parentNode.parentNode);
@@ -722,6 +722,7 @@
 				}
 			})();
 
+			//水平分隔条绑定拖拽方法
 			function horizontalFun(splitter) {
 				splitter.onmousedown = function(e) {
 					var prediv = splitter.previousSibling;
@@ -759,6 +760,7 @@
 				}
 			}
 
+			//垂直分隔条绑定拖拽方法
 			function verticalFun(splitter) {
 				splitter.onmousedown = function(e) {
 					var prediv = splitter.previousSibling;
@@ -772,10 +774,10 @@
 						var endX = e.clientX;
 						var moveLen = splitter.left + (endX - startX);
 						// 最小宽度
-						var maxT = TWidth - splitter.offsetWidth;
+						var maxT = TWidth - SPWDH;
 						if (moveLen < MINLEN) moveLen = MINLEN;
 						if (moveLen > maxT - MINLEN) moveLen = maxT - MINLEN;
-
+						
 						var tarWidth = ((moveLen / TWidth) * 100).toFixed(4);
 						var splWidth = ((SPWDH / TWidth) * 100).toFixed(4);
 						var dropWidth = (100 - tarWidth - splWidth).toFixed(4);
@@ -796,6 +798,7 @@
 				}
 			}
 
+			//垂直拖拽时重新计算右侧宽度百分比
 			function reloadRight() {
 				var divs = document.getElementsByClassName("vertical__splitter");
 				for (var i = 0, len = divs.length; i < len; i++) {
@@ -809,6 +812,7 @@
 				}
 			}
 
+			//水平拖拽时重新计算下方宽度百分比
 			function reloadBottom() {
 				var divs = document.getElementsByClassName("horizontal__splitter");
 				for (var i = 0, len = divs.length; i < len; i++) {
@@ -819,6 +823,20 @@
 					var tarHeight = prediv.getBoundingClientRect().height;
 					var dropHeight = THeight - tarHeight - SPWDH;
 					nextpdiv.style.height = ((dropHeight / THeight) * 100).toFixed(4) + '%';
+				}
+			}
+
+			function setNode(targetDropEle, typeName) {
+				var divs = document.getElementsByClassName("modelTitle");
+				for (var i = 0, len = divs.length; i < len; i++) {
+					if (divs[i].firstChild.innerHTML == typeName) {
+						divs[i].parentNode.insertBefore(targetDropEle, divs[i].nextSibling);
+						if (divs[i].lastChild.src.indexOf("arrow-down") > 0) {
+							targetDropEle.style.display = "none";
+						} else {
+							targetDropEle.style.display = "block";
+						}
+					}
 				}
 			}
 		</script>

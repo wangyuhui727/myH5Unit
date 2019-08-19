@@ -29,7 +29,7 @@
 					content: ["欢迎打开提示框"],
 					btns: ["确定"],
 					btnsNotShow:false,
-					btnOkColor:"#ff3451"
+					btnOkColor:"#66b1ff"
 				}
 				dialog.showDialog(inParam, function(){
 					alert("你点了确定");
@@ -40,10 +40,10 @@
 				var inParam = {
 					title: "",
 					titleNotShow:false,
-					content: ["我不知道该说什么","我就是想换个行","点击确定可以自定义事件哦"],
+					content: "我不知道该说什么,我就是想换个行,点击确定可以自定义事件哦",//["我不知道该说什么","我就是想换个行","点击确定可以自定义事件哦"],
 					btns: ["取消","确定"],
 					btnsNotShow:false,
-					btnOkColor:"#ff3451"
+					btnOkColor:"#66b1ff"
 				}
 				dialog.showDialog(inParam, function(){
 					alert("你点了确定");
@@ -60,15 +60,15 @@
 			})
 			
 			document.getElementById("loadBtn").addEventListener('click', function(){
-				var inParam = {
-					content: "加载中...",
-					showTime:30000
-				}
-				dialog.showLoading(inParam);
+				// var inParam = {
+				// 	// content: "加载中...",
+				// 	showTime:30000
+				// }
+				dialog.showLoading();
 				
-				setTimeout(function(){
-					dialog.hideLoading();
-				},1000)
+				// setTimeout(function(){
+				// 	dialog.hideLoading();
+				// },1000)
 			})
 		</script>
 	</body>
