@@ -5,7 +5,7 @@
 		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
 		<title>弹窗</title>
 
-		<script type="text/javascript" src="js/rem.min.js"></script>
+		<script src="js/rem.min.js"></script>
 		<link rel="stylesheet" href="css/style.css" />
 	</head>
 	<body ontouchstart>
@@ -20,11 +20,11 @@
 			<button id="loadBtn" type="button" class="blueBtn">加载框</button>
 		</div>
 		
-		<script type="text/javascript" src="js/united.js"></script>
+		<script src="js/united.js"></script>
 		<script>
 			document.getElementById("promptBtn").addEventListener('click', function(){
 				var inParam = {
-					title: "",
+					title: "错误",
 					titleNotShow:false,
 					content: ["欢迎打开提示框"],
 					btns: ["确定"],
@@ -60,10 +60,10 @@
 			})
 			
 			document.getElementById("loadBtn").addEventListener('click', function(){
-				// var inParam = {
-				// 	// content: "加载中...",
-				// 	showTime:30000
-				// }
+				var inParam = {
+					content: "加载中...",
+					showTime:30000
+				}
 				dialog.showLoading();
 				
 				// setTimeout(function(){
